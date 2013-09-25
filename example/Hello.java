@@ -3,7 +3,7 @@ import java.rmi.server.*;
 
 class Hello extends UnicastRemoteObject implements HelloInterface
 {
-  private static final String serverName = "hello";
+  private static final String serverName = "//0.0.0.0/hello";
 
   public Hello() throws RemoteException
   {

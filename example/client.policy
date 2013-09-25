@@ -1,7 +1,3 @@
-grant
-{
-  permission java.net.SocketPermission 
-         "0.0.0.0:1024-65535", "connect";
-  permission java.net.SocketPermission 
-         "0.0.0.0:80", "connect";
+grant codeBase "file:/Users/yanan/javapro/workspace/DS_RMI/example/" {
+	    permission java.security.AllPermission;
 };
