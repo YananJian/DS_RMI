@@ -1,3 +1,0 @@
-grant codeBase "file:/Users/yanan/javapro/workspace/DS_RMI/example/" {
-	    permission java.security.AllPermission;
-};
