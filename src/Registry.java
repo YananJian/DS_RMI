@@ -25,24 +25,29 @@ public class Registry {
     private int manager_port = Constants.PORT_MASTER;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
-    private Socket sock = null;
+    private ServerSocket sock = null;
 
     public void listen() throws IOException, ClassNotFoundException
     {
-	ois = new ObjectInputStream(sock.getInputStream());
-	System.out.println("Listening for messages...");
-	while (true) { 
-	    Msg msg = (Msg) ois.readObject();
-	    System.out.println("Got a msg");
-	    // TODO: process message here
-	    // this.process(msg);  
+	while (true) {
+	    System.out.println("Listening for messages...");
+	    Socket incoming_sock = sock.accept();
+	    try {
+		ois = new ObjectInputStream(incoming_sock.getInputStream());
+		Msg msg = (Msg) ois.readObject();
+		System.out.println("Got a msg");
+		// TODO: process message here
+		// this.process(msg);  
+	    } catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	    }
 	}
     }
 
     public void connect() throws InterruptedException, ClassNotFoundException
     {
 	try {
-	    sock = new Socket(this.manager_IP, this.manager_port);
+	    sock = new ServerSocket(this.manager_port);
 	    // Currently: 
 	    //      - no greeting, i.e. assume registry comes online first 
 	    //      - (could alter this for robustness)
