@@ -16,28 +16,32 @@ import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.HashMap;
 import java.io.*;
-//import java.lang.reflect.*;
+import utils.*;
 
 public class Registry {
 
     private HashMap<String, Remote> obj_map = new HashMap<String, Remote>();
-    private String manager_IP = Constants.IP_MASTER;
-    private int manager_port = Constants.PORT_MASTER;
+    private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
-    private ServerSocket sock = null;
+    private ServerSocket listener = null;
+
+    public void process(utils.Msg msg) 
+    {
+	System.out.println(" > pretending to process message");
+    }
 
     public void listen() throws IOException, ClassNotFoundException
     {
 	while (true) {
 	    System.out.println("Listening for messages...");
-	    Socket incoming_sock = sock.accept();
+	    Socket sock = listener.accept();
 	    try {
-		ois = new ObjectInputStream(incoming_sock.getInputStream());
-		Msg msg = (Msg) ois.readObject();
-		System.out.println("Got a msg");
-		// TODO: process message here
-		// this.process(msg);  
+		ois = new ObjectInputStream(sock.getInputStream());
+		oos = new ObjectOutputStream(sock.getOutputStream());
+		utils.Msg msg = (utils.Msg) ois.readObject();
+		System.out.println(" > got a message!");
+		this.process(msg);  
 	    } catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	    }
@@ -47,11 +51,7 @@ public class Registry {
     public void connect() throws InterruptedException, ClassNotFoundException
     {
 	try {
-	    sock = new ServerSocket(this.manager_port);
-	    // Currently: 
-	    //      - no greeting, i.e. assume registry comes online first 
-	    //      - (could alter this for robustness)
-	    //      - no output socket created until an incoming message is received
+	    listener = new ServerSocket(this.port);
 	    this.listen();
 	} catch (UnknownHostException e) {
 	    // TODO Auto-generated catch block
