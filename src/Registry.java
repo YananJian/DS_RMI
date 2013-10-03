@@ -16,28 +16,54 @@ import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.HashMap;
 import java.io.*;
-//import java.lang.reflect.*;
+import utils.*;
+import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, Remote> obj_map = new HashMap<String, Remote>();
-    private String manager_IP = Constants.IP_MASTER;
-    private int manager_port = Constants.PORT_MASTER;
+    private HashMap<String, Remote> obj_map = new HashMap<String, Remote>(); // obj name -> obj
+    private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
+    private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
-    private ServerSocket sock = null;
+    private ServerSocket listener = null;
+
+    public String[] list(ObjectOutputStream oos)
+    {
+	// TODO: iterate through obj_map; put all obj names into array; return array
+	return null;
+    }
+
+    public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
+    {
+	System.out.println(" > processing message");
+	utils.Msg reply = new utils.Msg();
+	utils.Constants.MESSAGE_TYPE msg_type = msg.get_msg_tp();
+
+	if (msg_type == MESSAGE_TYPE.LIST) { 
+	    this.list(oos); 
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
+	}
+	else { 
+	    System.out.println(" > replying with default message");
+	    reply.set_msg_tp(MESSAGE_TYPE.DEFAULT);
+	}
+	return reply;
+    }
 
     public void listen() throws IOException, ClassNotFoundException
     {
 	while (true) {
 	    System.out.println("Listening for messages...");
-	    Socket incoming_sock = sock.accept();
+	    Socket sock = listener.accept();
 	    try {
-		ois = new ObjectInputStream(incoming_sock.getInputStream());
-		Msg msg = (Msg) ois.readObject();
-		System.out.println("Got a msg");
-		// TODO: process message here
-		// this.process(msg);  
+		ois = new ObjectInputStream(sock.getInputStream());
+		oos = new ObjectOutputStream(sock.getOutputStream());
+		utils.Msg msg = (utils.Msg) ois.readObject();
+		System.out.println(" > got a message!");
+		utils.Msg reply = this.process(msg, oos);  
+		oos.writeObject(reply);
+		oos.flush();
 	    } catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	    }
@@ -47,11 +73,7 @@ public class Registry {
     public void connect() throws InterruptedException, ClassNotFoundException
     {
 	try {
-	    sock = new ServerSocket(this.manager_port);
-	    // Currently: 
-	    //      - no greeting, i.e. assume registry comes online first 
-	    //      - (could alter this for robustness)
-	    //      - no output socket created until an incoming message is received
+	    listener = new ServerSocket(this.port);
 	    this.listen();
 	} catch (UnknownHostException e) {
 	    // TODO Auto-generated catch block

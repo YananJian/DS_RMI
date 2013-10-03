@@ -3,9 +3,9 @@ package utils;
 import utils.Constants.MESSAGE_TYPE;
 
 
-
 public class Msg implements java.io.Serializable{
-	// required: type of message (identifies desired action by recipient)
+    
+// required: type of message (identifies desired action by recipient)
     private MESSAGE_TYPE msg_type = null;
     private String func_name;
     private String obj_name;
@@ -22,19 +22,24 @@ public class Msg implements java.io.Serializable{
     	return msg_type;
     }
 
-	public RemoteObjectRef getRemote_ref() {
-		return remote_ref;
-	}
+    public RemoteObjectRef getRemote_ref() 
+    {
+	return remote_ref;
+    }
+    
+    public void setRemote_ref(RemoteObjectRef remote_ref) 
+    {
+	this.remote_ref = remote_ref;
+    }
+    
+    public String getObj_name() 
+    {
+	return obj_name;
+    }
+    
+    public void setObj_name(String obj_name) 
+    {
+	this.obj_name = obj_name;
+    }
 
-	public void setRemote_ref(RemoteObjectRef remote_ref) {
-		this.remote_ref = remote_ref;
-	}
-
-	public String getObj_name() {
-		return obj_name;
-	}
-
-	public void setObj_name(String obj_name) {
-		this.obj_name = obj_name;
-	}
 }
