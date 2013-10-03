@@ -42,10 +42,11 @@ public class Registry {
 
 	if (msg_type == MESSAGE_TYPE.LIST) { 
 	    this.list(oos); 
+	    System.out.println(" > replying with RET_LIST message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
 	}
 	else { 
-	    System.out.println(" > replying with default message");
+	    System.out.println(" > replying with DEFAULT message");
 	    reply.set_msg_tp(MESSAGE_TYPE.DEFAULT);
 	}
 	return reply;
