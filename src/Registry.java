@@ -17,18 +17,38 @@ import java.net.*;
 import java.util.HashMap;
 import java.io.*;
 import utils.*;
+import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, Remote> obj_map = new HashMap<String, Remote>();
+    private HashMap<String, Remote> obj_map = new HashMap<String, Remote>(); // obj name -> obj
+    private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private ServerSocket listener = null;
 
-    public void process(utils.Msg msg) 
+    public String[] list(ObjectOutputStream oos)
     {
-	System.out.println(" > pretending to process message");
+	// TODO: iterate through obj_map; put all obj names into array; return array
+	return null;
+    }
+
+    public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
+    {
+	System.out.println(" > processing message");
+	utils.Msg reply = new utils.Msg();
+	utils.Constants.MESSAGE_TYPE msg_type = msg.get_msg_tp();
+
+	if (msg_type == MESSAGE_TYPE.LIST) { 
+	    this.list(oos); 
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
+	}
+	else { 
+	    System.out.println(" > replying with default message");
+	    reply.set_msg_tp(MESSAGE_TYPE.DEFAULT);
+	}
+	return reply;
     }
 
     public void listen() throws IOException, ClassNotFoundException
@@ -41,7 +61,9 @@ public class Registry {
 		oos = new ObjectOutputStream(sock.getOutputStream());
 		utils.Msg msg = (utils.Msg) ois.readObject();
 		System.out.println(" > got a message!");
-		this.process(msg);  
+		utils.Msg reply = this.process(msg, oos);  
+		oos.writeObject(reply);
+		oos.flush();
 	    } catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	    }
