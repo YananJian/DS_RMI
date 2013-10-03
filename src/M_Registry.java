@@ -108,10 +108,51 @@ public class M_Registry
 	sock.close();
     }
     
+	public void list()
+	{
+	
+	Socket sock;
+	try {
+		sock = new Socket(Host, Port);
+		ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+		ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+		System.out.println("stream made.");
+		utils.Msg msg = new utils.Msg();
+		msg.set_msg_tp(MESSAGE_TYPE.LIST);
+		// it is locate request, with a service name.
+		oos.writeObject(msg);
+		utils.Msg ret_msg;
+		// it is a rebind request, with a service name and ROR.
+		System.out.println("list");
+		// it also gets an ack, but this is not used.
+		try {
+			utils.Msg ack = (utils.Msg)ois.readObject();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// close the socket.
+		sock.close();
+	} catch (UnknownHostException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	} catch (IOException e1) {
+		// TODO Auto-generated catch block
+		e1.printStackTrace();
+	}
+	    
+	// get TCP streams and wrap them. 
+	
+
+	
+    }
+
+
     public static void main(String args[])
     {
-    	String Host = "0.0.0.0";
-    	int port = 10000;
+    	String Host = "128.2.13.143";
+    	int port = 12345;
     	M_Registry m_registry = new M_Registry(Host, port);
     	try {
 			m_registry.lookup("test");
