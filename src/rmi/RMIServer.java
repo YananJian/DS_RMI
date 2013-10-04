@@ -1,7 +1,11 @@
+/*
+ make dummy version that starts up
+ sends bind / rebind / unbind messages to registry; listens for ack...
+      server should start up, bind SOMETHING in main()
+*/
+
 package rmi;
-// make dummy version that starts up
-// sends bind / rebind / unbind messages to registry; listens for ack...
-//      server should start up, bind SOMETHING in main()
+
 import utils.*;
 
 import java.io.EOFException;
@@ -24,21 +28,21 @@ public class RMIServer implements Runnable
     {
     	obj_map = new Hashtable<String, Object>();
     	try {
-			listener = new ServerSocket(port);
-			Thread t = new Thread (this);
-	    	t.start();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}   	
+	    listener = new ServerSocket(port);
+	    Thread t = new Thread (this);
+	    t.start();
+	    
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}   	
     }
     
     
     public static RMIServer getInstance()
     {
     	if (rserver == null)
-    		rserver = new RMIServer();
+	    rserver = new RMIServer();
     	return rserver;
     }
     
@@ -47,10 +51,10 @@ public class RMIServer implements Runnable
     	Class<?> interfaces[] = obj.getClass().getInterfaces();
     	String remote_name = obj.getClass().toString() + "_stub";
     	String[] interface_names=new String[interfaces.length];
-		for(int i=0;i<interfaces.length;i++){
-			interface_names[i]=interfaces[i].getName();
-			System.out.println("Creating Stub, interface:"+interface_names[i]);
-		}
+	for(int i=0;i<interfaces.length;i++){
+	    interface_names[i]=interfaces[i].getName();
+	    System.out.println("Creating Stub, interface:"+interface_names[i]);
+	}
     	RemoteObjectRef ror = new RemoteObjectRef("0.0.0.0", port, 0, interface_names);
     	ror.setObj_Name(remote_name);
     	return ror;
@@ -65,24 +69,24 @@ public class RMIServer implements Runnable
     	Object params = msg.getParams();
     	Object ret_val = null;
     	try {
-    		  Method method = obj.getClass().getMethod(func_name, (Class<?>[]) params);
-    		  ret_val = method.invoke(obj, params);
-    		  ret_msg.setRets(ret_val);
-    		 
-    		} catch (SecurityException e) {
-    		  // ...
-    		} catch (NoSuchMethodException e) {
-    		  // ...
-    		} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    Method method = obj.getClass().getMethod(func_name, (Class<?>[]) params);
+	    ret_val = method.invoke(obj, params);
+	    ret_msg.setRets(ret_val);
+	    
+	} catch (SecurityException e) {
+	    // ...
+	} catch (NoSuchMethodException e) {
+	    // ...
+	} catch (IllegalArgumentException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (IllegalAccessException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (InvocationTargetException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     	
     	return ret_msg;
     }
@@ -93,12 +97,12 @@ public class RMIServer implements Runnable
     	Msg ret_msg = new Msg();
     	if (tp == Constants.MESSAGE_TYPE.LOOKUP)
     	{
-    		RemoteObjectRef ror = create_ror(msg);
-    		
-    		ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
-    		ret_msg.setRemote_ref(ror);
-    		return ret_msg;
-   		
+	    RemoteObjectRef ror = create_ror(msg);
+	    
+	    ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
+	    ret_msg.setRemote_ref(ror);
+	    return ret_msg;
+	    
     	}
     	return ret_msg;
     }
@@ -107,45 +111,42 @@ public class RMIServer implements Runnable
     {
     	if (listener == null)
     	{
-    		System.out.println("Server Socket Can not establish");
-    		return;
+	    System.out.println("Server Socket Can not establish");
+	    return;
     	}
     	while(true)
     	{
-    		 System.out.println("Listening for messages...");  		 
-    		 try 
-    		 {
-    			Socket sock = listener.accept();
-    			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
-    			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
-    			Msg msg = (Msg) ois.readObject();
-    			System.out.println(" > got a message!");
+	    System.out.println("Listening for messages...");  		 
+	    try 
+		{
+		    Socket sock = listener.accept();
+		    ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+		    ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+		    Msg msg = (Msg) ois.readObject();
+		    System.out.println(" > got a message!");
     			msg = this.process(msg);
     			oos.writeObject(msg);
     			
     		 } catch (ClassNotFoundException e) {
     			e.printStackTrace();
     		 } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
     	}
     	
     }
     
     @Override
 	public void run() {
-		// TODO Auto-generated method stub
-		listen();
-	}
-   
+	// TODO Auto-generated method stub
+	listen();
+    }
+    
     public static void main(String args[])
     {
     	
-    	
+	
     }
-
-
-
 	
 }
