@@ -85,7 +85,7 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.BIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.get_object();
+	    Object o = msg.getObj();
 
 	    this.bind(serverIP_port, url, o);
 
@@ -95,7 +95,7 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.REBIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.get_object();
+	    Object o = msg.getObj();
 
 	    this.rebind(serverIP_port, url, o);
 
@@ -105,7 +105,7 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.UNBIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.get_object();
+	    Object o = msg.getObj();
 
 	    this.unbind(serverIP_port, url);
 
