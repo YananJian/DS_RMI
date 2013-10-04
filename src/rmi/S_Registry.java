@@ -1,35 +1,52 @@
+package rmi;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.lang.*;
 
 import utils.Constants.MESSAGE_TYPE;
 import utils.Msg;
+import utils.RemoteObjectRef;
 
 public class S_Registry implements Runnable {
 	
 	int port;
-	HashMap<String, Object> reg;
+	HashMap<String, RemoteObjectRef> reg;
+	HashMap<String, String> reg_server;
 	public S_Registry(int port)
 	{
 		this.port = port;
+		reg = new HashMap<String, RemoteObjectRef>();
+		reg_server = new HashMap<String, String>();
 	}
 
 	public Msg process(Msg msg)
 	{
 		System.out.println("MSG TYPE:"+msg.get_msg_tp());
+		Msg ret_msg = new Msg();
 		if (msg.get_msg_tp() == MESSAGE_TYPE.LOOKUP)
 		{
 			String name = msg.getObj_name();
+			// suppose the remote object is in the registry
+			if (reg.get(name) != null)
+			{
+				ret_msg.setRemote_ref(reg.get(name));	
+				ret_msg.set_msg_tp(MESSAGE_TYPE.RET_LOOKUP);
+				return ret_msg;
+			}
 			
 		}
 		else if (msg.get_msg_tp() == MESSAGE_TYPE.REBIND)
 		{
-			
+			String host = msg.getIp() + ":" + Integer.toString(msg.getPort());
+			reg.put(msg.getObj_name(), msg.getRemote_ref());
+			reg_server.put(msg.getObj_name(), host);
+			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
 		}
-		Msg ret_msg = new Msg();
-		ret_msg.set_msg_tp(MESSAGE_TYPE.RET_LIST);
+		
+		
 		return ret_msg;
 	}
 	
@@ -47,7 +64,10 @@ public class S_Registry implements Runnable {
                 	
                 	Msg msg = (Msg) ois.readObject();
                 	System.out.println("Got the msg");
-                			
+                	System.out.println(sock.getInetAddress());
+                	System.out.println(sock.getPort());
+                	msg.setIp(sock.getInetAddress().getHostAddress());
+                	msg.setPort(sock.getPort());
                 	Msg ret_msg = this.process(msg);  
                 	oos.writeObject(ret_msg);
                                 

@@ -9,8 +9,12 @@ public class Msg implements java.io.Serializable{
     private MESSAGE_TYPE msg_type = null;
     private String func_name;
     private String obj_name;
-    private String params[];
+    private Object params[];
     private RemoteObjectRef remote_ref;
+    private String ip;
+    private int port;
+    private Object obj;
+    private Object rets;
     
     public void set_msg_tp(MESSAGE_TYPE tp)
     {
@@ -42,4 +46,52 @@ public class Msg implements java.io.Serializable{
 	this.obj_name = obj_name;
     }
 
+	public Object getObj() {
+		return obj;
+	}
+
+	public void setObj(Object obj) {
+		this.obj = obj;
+	}
+
+	public String getIp() {
+		return ip;
+	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
+	public Object[] getParams() {
+		return params;
+	}
+
+	public void setParams(Object params[]) {
+		this.params = params;
+	}
+
+	public String getFunc_name() {
+		return func_name;
+	}
+
+	public void setFunc_name(String func_name) {
+		this.func_name = func_name;
+	}
+
+	public Object getRets() {
+		return rets;
+	}
+
+	public void setRets(Object ret_val) {
+		this.rets = ret_val;
+	}
+    
 }

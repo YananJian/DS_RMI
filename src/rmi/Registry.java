@@ -1,3 +1,4 @@
+package rmi;
 // HashMap<String, Remote> : name of obj (i.e. url of obj) -> obj 
 // Communicates with client stubs, server skeleton(s):
 //      can return list of available object names (urls) (client) - list()

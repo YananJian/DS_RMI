@@ -1,13 +1,23 @@
 package utils;
 
-public class RemoteObjectRef {
-	
-	private String IP_adr;
-    private int Port;
-    private int Obj_Key;
-    private String Remote_Interface_Name;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
-    public RemoteObjectRef(String ip, int port, int obj_key, String riname) 
+import utils.Constants.MESSAGE_TYPE;
+
+public class RemoteObjectRef implements java.io.Serializable{
+	
+	private static String IP_adr;
+    private static int Port;
+    private int Obj_Key;
+    private String Obj_Name;
+    private String[] Interface_names;
+    
+
+    public RemoteObjectRef(String ip, int port, int obj_key, String[] riname) 
     {
     	setIP_adr(ip);
     	setPort(port);
@@ -15,10 +25,55 @@ public class RemoteObjectRef {
     	setRemote_Interface_Name(riname);
     }
 
+    public static Object invoke(String func_name, Object params[])
+    {
+    	Object rets = null;
+    	try {
+			Socket sock = new Socket(IP_adr, Port);
+			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());			
+			Msg msg = new Msg();
+			msg.set_msg_tp(MESSAGE_TYPE.INVOKE);
+			msg.setFunc_name(func_name);
+			msg.setParams(params);
+			oos.writeObject(msg);
+			Msg ret_msg = (Msg) ois.readObject();
+			rets = ret_msg.getRets();			
+			return rets;
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return rets;
+    }
     // this method is important, since it is a stub creator.
     // 
-    Object localise()
+    public Object localise()
     {
+    	Object o = null;
+    	 
+        try {
+        	System.out.println("Obj name:"+Obj_Name);
+        	Class c = Class.forName(Obj_Name);
+			o = c.newInstance();
+			
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        return o;
 	// Implement this as you like: essentially you should 
 	// create a new stub object and returns it.
 	// Assume the stub class has the name e.g.
@@ -36,7 +91,6 @@ public class RemoteObjectRef {
 	// arguments etc., in a marshalled form, and CM (yourRMI) sends it out to 
 	// another place. 
 	// Here let it return null.
-	return null;
     }
 
 	public String getIP_adr() {
@@ -63,12 +117,20 @@ public class RemoteObjectRef {
 		Obj_Key = obj_Key;
 	}
 
-	public String getRemote_Interface_Name() {
-		return Remote_Interface_Name;
+	public String[] getRemote_Interface_Name() {
+		return Interface_names;
 	}
 
-	public void setRemote_Interface_Name(String remote_Interface_Name) {
-		Remote_Interface_Name = remote_Interface_Name;
+	public void setRemote_Interface_Name(String []remote_Interface_Name) {
+		Interface_names = remote_Interface_Name;
+	}
+
+	public String getObj_Name() {
+		return Obj_Name;
+	}
+
+	public void setObj_Name(String obj_Name) {
+		Obj_Name = obj_Name;
 	}
 
 }
