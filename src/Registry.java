@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.*;
 import java.util.HashMap;
+import java.util.Vector;
 import java.io.*;
 import utils.*;
 import utils.Constants.*;
@@ -28,10 +29,13 @@ public class Registry {
     private ObjectInputStream ois;
     private ServerSocket listener = null;
 
-    public String[] list(ObjectOutputStream oos)
+    public Vector<String> list()
     {
-	// TODO: iterate through obj_map; put all obj names into array; return array
-	return null;
+	Vector<String> list = new Vector<String>();
+	for (String key : this.obj_map.keySet()) {
+	    list.add(key);
+	}
+	return list;
     }
 
     public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
@@ -41,7 +45,7 @@ public class Registry {
 	utils.Constants.MESSAGE_TYPE msg_type = msg.get_msg_tp();
 
 	if (msg_type == MESSAGE_TYPE.LIST) { 
-	    this.list(oos); 
+	    reply.set_list(this.list());
 	    System.out.println(" > replying with RET_LIST message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
 	}

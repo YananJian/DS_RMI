@@ -1,7 +1,7 @@
 package utils;
 
 import utils.Constants.MESSAGE_TYPE;
-
+import java.util.Vector;
 
 public class Msg implements java.io.Serializable{
     
@@ -10,6 +10,7 @@ public class Msg implements java.io.Serializable{
     private String func_name;
     private String obj_name;
     private String params[];
+    private Vector<String> list;
     private RemoteObjectRef remote_ref;
     
     public void set_msg_tp(MESSAGE_TYPE tp)
@@ -20,6 +21,16 @@ public class Msg implements java.io.Serializable{
     public MESSAGE_TYPE get_msg_tp()
     {
     	return msg_type;
+    }
+
+    public void set_list(Vector<String> list)
+    {
+	this.list = list;
+    }
+
+    public Vector<String> get_list() 
+    {
+	return list;
     }
 
     public RemoteObjectRef getRemote_ref() 
