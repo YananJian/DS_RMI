@@ -5,12 +5,13 @@ import java.util.Vector;
 
 public class Msg implements java.io.Serializable{
     
-// required: type of message (identifies desired action by recipient)
-    private MESSAGE_TYPE msg_type = null;
-    private String func_name;
+    private MESSAGE_TYPE msg_type = null; // required: type of message (identifies desired action by recipient)
+    private String func_name; 
     private String obj_name;
     private String params[];
-    private Vector<String> list;
+    private Vector<String> list; // for LIST requests only
+    private String url; // for BIND / REBIND only
+    private Object object;
     private RemoteObjectRef remote_ref;
     
     public void set_msg_tp(MESSAGE_TYPE tp)
@@ -20,7 +21,7 @@ public class Msg implements java.io.Serializable{
     
     public MESSAGE_TYPE get_msg_tp()
     {
-    	return msg_type;
+    	return this.msg_type;
     }
 
     public void set_list(Vector<String> list)
@@ -30,12 +31,32 @@ public class Msg implements java.io.Serializable{
 
     public Vector<String> get_list() 
     {
-	return list;
+	return this.list;
+    }
+
+    public void set_url(String url) 
+    {
+	this.url = url;
+    }
+
+    public String get_url() 
+    {
+	return this.url;
+    }
+
+    public void set_object(Object object) 
+    {
+	this.object = object;
+    }
+
+    public Object get_object()
+    {
+	return this.object;
     }
 
     public RemoteObjectRef getRemote_ref() 
     {
-	return remote_ref;
+	return this.remote_ref;
     }
     
     public void setRemote_ref(RemoteObjectRef remote_ref) 
@@ -45,7 +66,7 @@ public class Msg implements java.io.Serializable{
     
     public String getObj_name() 
     {
-	return obj_name;
+	return this.obj_name;
     }
     
     public void setObj_name(String obj_name) 

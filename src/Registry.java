@@ -38,6 +38,26 @@ public class Registry {
 	return list;
     }
 
+    public void lookup()
+    {
+	// TODO
+    }
+
+    public void bind(String url, Object o)
+    {
+	// TODO
+    }
+
+    public void rebind(String url, Object o)
+    {
+	// TODO
+    }
+
+    public void unbind(String url, Object o)
+    {
+	// TODO
+    }
+
     public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
     {
 	System.out.println(" > processing message");
@@ -48,6 +68,20 @@ public class Registry {
 	    reply.set_list(this.list());
 	    System.out.println(" > replying with RET_LIST message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
+	}
+	if (msg_type == MESSAGE_TYPE.LOOKUP) {
+	    // TODO:
+	    // see if a server has this object;
+	    // if so, forward the lookup message to the appropriate server (who will return the stub)
+	}
+	if (msg_type == MESSAGE_TYPE.BIND) {
+	    this.bind(msg.get_url(), msg.get_object());
+	}
+	if (msg_type == MESSAGE_TYPE.REBIND) {
+	    this.rebind(msg.get_url(), msg.get_object());
+	}
+	if (msg_type == MESSAGE_TYPE.UNBIND) {
+	    this.unbind(msg.get_url(), msg.get_object());
 	}
 	else { 
 	    System.out.println(" > replying with DEFAULT message");
