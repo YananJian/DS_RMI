@@ -1,5 +1,5 @@
 package rmi;
-// HashMap<String, Remote> : name of obj (i.e. url of obj) -> obj 
+// HashMap<String, Remote> : name of obj (i.e. url of obj) -> remote obj ref of obj
 // Communicates with client stubs, server skeleton(s):
 //      can return list of available object names (urls) (client) - list()
 //      can send a serialized stub of object (client) - lookup() ?
@@ -23,7 +23,7 @@ import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, utils.RemoteObjectReference> obj_map = new HashMap<String, utils.RemoteObjectReference>(); // obj name -> obj
+    private HashMap<String, RemoteObjectRef> obj_map = new HashMap<String, RemoteObjectRef>(); // obj name -> obj
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
@@ -39,13 +39,13 @@ public class Registry {
 	return list;
     }
 
-    public void bind(String serverIP_port, String url, utils.RemoteObjectReference r)
+    public void bind(String serverIP_port, String url, RemoteObjectRef r)
     {
 	this.server_map.put(url, serverIP_port);
 	this.obj_map.put(url, r);
     }
 
-    public void rebind(String serverIP_port, String url, utils.RemoteObjectReference) // currently identical to bind
+    public void rebind(String serverIP_port, String url, RemoteObjectRef r) // currently identical to bind
     {
 	this.bind(serverIP_port, url, r);
     }
@@ -77,14 +77,14 @@ public class Registry {
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
 	}
 	if (msg_type == MESSAGE_TYPE.LOOKUP) {
-	    // TODO: 
-	    // if it has this object: return remote object reference
-	    // set reply type
+	    String url = msg.get_url();
+	    if (this.obj_map.containsKey(url)) { reply.setRemote_ref(obj_map.get(url)); }
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_LOOKUP);
 	}
 	if (msg_type == MESSAGE_TYPE.BIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    utils.RemoteObjectReference r = msg.getRemote_ref();
+	    RemoteObjectRef r = msg.getRemote_ref();
 
 	    this.bind(serverIP_port, url, r);
 
@@ -94,7 +94,7 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.REBIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    utils.RemoteObjectReference r = msg.getRemote_ref();
+	    RemoteObjectRef r = msg.getRemote_ref();
 
 	    this.rebind(serverIP_port, url, r);
 
