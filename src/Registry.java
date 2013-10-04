@@ -57,8 +57,11 @@ public class Registry {
 
     public String get_address(Socket sock)
     {
-	// TODO: implement
-	return "temp";
+	InetAddress IP = sock.getInetAddress();
+	String IP_str = IP.getHostAddress();
+	int Port = sock.getPort();
+	String Port_str = Integer.toString(Port);
+	return IP_str + "_" + Port_str;
     }
 
     public utils.Msg process(utils.Msg msg, Socket sock) throws IOException
