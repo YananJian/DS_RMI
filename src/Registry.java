@@ -1,7 +1,7 @@
 // HashMap<String, Remote> : name of obj (i.e. url of obj) -> obj 
 // Communicates with client stubs, server skeleton(s):
 //      can return list of available object names (urls) (client) - list()
-//      can send a serialized stub of object (client) - lookup() 
+//      can send a serialized stub of object (client) - lookup() ?
 //      can update Map of available stuff (server) - bind(), rebind(), unbind()
 
 // bind(url, object);
@@ -38,28 +38,30 @@ public class Registry {
 	return list;
     }
 
-    public void lookup()
+    public void bind(String serverIP_port, String url, Object o)
     {
-	// TODO
-    }
-
-    public void bind(String url, Object o)
-    {
+	this.server_map.put(url, serverIP_port);
 	this.obj_map.put(url, o);
     }
 
-    // currently identical to bind
-    public void rebind(String url, Object o)
+    public void rebind(String serverIP_port, String url, Object o) // currently identical to bind
     {
-	this.obj_map.put(url, o);
+	this.bind(serverIP_port, url, o);
     }
 
-    public void unbind(String url)
+    public void unbind(String serverIP_port, String url)
     {
+	this.server_map.remove(url);
 	this.obj_map.remove(url);
     }
 
-    public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
+    public String get_address(Socket sock)
+    {
+	// TODO: implement
+	return "temp";
+    }
+
+    public utils.Msg process(utils.Msg msg, Socket sock) throws IOException
     {
 	System.out.println(" > processing message");
 	utils.Msg reply = new utils.Msg();
@@ -77,17 +79,32 @@ public class Registry {
 	    // set reply type
 	}
 	if (msg_type == MESSAGE_TYPE.BIND) {
-	    this.bind(msg.get_url(), msg.get_object());
+	    String serverIP_port = get_address(sock);
+	    String url = msg.get_url();
+	    Object o = msg.get_object();
+
+	    this.bind(serverIP_port, url, o);
+
 	    System.out.println(" > replying with RET_BIND message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_BIND);
 	}
 	if (msg_type == MESSAGE_TYPE.REBIND) {
-	    this.rebind(msg.get_url(), msg.get_object());
+	    String serverIP_port = get_address(sock);
+	    String url = msg.get_url();
+	    Object o = msg.get_object();
+
+	    this.rebind(serverIP_port, url, o);
+
 	    System.out.println(" > replying with RET_REBIND message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
 	}
 	if (msg_type == MESSAGE_TYPE.UNBIND) {
-	    this.unbind(msg.get_url());
+	    String serverIP_port = get_address(sock);
+	    String url = msg.get_url();
+	    Object o = msg.get_object();
+
+	    this.unbind(serverIP_port, url);
+
 	    System.out.println(" > replying with RET_UNBIND message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_UNBIND);
 	}
@@ -108,7 +125,7 @@ public class Registry {
 		oos = new ObjectOutputStream(sock.getOutputStream());
 		utils.Msg msg = (utils.Msg) ois.readObject();
 		System.out.println(" > got a message!");
-		utils.Msg reply = this.process(msg, oos);  
+		utils.Msg reply = this.process(msg, sock);  
 		oos.writeObject(reply);
 		oos.flush();
 	    } catch (ClassNotFoundException e) {

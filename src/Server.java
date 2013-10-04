@@ -25,7 +25,7 @@ public class Server
 	host = (InetAddress.getLocalHost()).getHostName();
 	port = 12346;
 
-	// it now have two classes from MainClassName: 
+	// it now has two classes from MainClassName: 
 	// (1) the class itself (say ZipCpdeServerImpl) and
 	// (2) its skeleton.
 	Class initialclass = Class.forName(InitialClassName);
