@@ -10,7 +10,7 @@ public class Msg implements java.io.Serializable{
     private String obj_name;
     private String params[];
     private Vector<String> list; // for LIST requests only
-    private String url; // for BIND / REBIND only
+    private String url; // for BIND, REBIND, UNBIND
     private Object object;
     private RemoteObjectRef remote_ref;
     

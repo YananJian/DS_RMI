@@ -22,7 +22,7 @@ import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, Remote> obj_map = new HashMap<String, Remote>(); // obj name -> obj
+    private HashMap<String, Object> obj_map = new HashMap<String, Object>(); // obj name -> obj
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
@@ -45,17 +45,18 @@ public class Registry {
 
     public void bind(String url, Object o)
     {
-	// TODO
+	this.obj_map.put(url, o);
     }
 
+    // currently identical to bind
     public void rebind(String url, Object o)
     {
-	// TODO
+	this.obj_map.put(url, o);
     }
 
-    public void unbind(String url, Object o)
+    public void unbind(String url)
     {
-	// TODO
+	this.obj_map.remove(url);
     }
 
     public utils.Msg process(utils.Msg msg, ObjectOutputStream oos) throws IOException
@@ -73,15 +74,22 @@ public class Registry {
 	    // TODO:
 	    // see if a server has this object;
 	    // if so, forward the lookup message to the appropriate server (who will return the stub)
+	    // set reply type
 	}
 	if (msg_type == MESSAGE_TYPE.BIND) {
 	    this.bind(msg.get_url(), msg.get_object());
+	    System.out.println(" > replying with RET_BIND message");
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_BIND);
 	}
 	if (msg_type == MESSAGE_TYPE.REBIND) {
 	    this.rebind(msg.get_url(), msg.get_object());
+	    System.out.println(" > replying with RET_REBIND message");
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
 	}
 	if (msg_type == MESSAGE_TYPE.UNBIND) {
-	    this.unbind(msg.get_url(), msg.get_object());
+	    this.unbind(msg.get_url());
+	    System.out.println(" > replying with RET_UNBIND message");
+	    reply.set_msg_tp(MESSAGE_TYPE.RET_UNBIND);
 	}
 	else { 
 	    System.out.println(" > replying with DEFAULT message");
