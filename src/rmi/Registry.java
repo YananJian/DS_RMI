@@ -23,7 +23,7 @@ import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, Object> obj_map = new HashMap<String, Object>(); // obj name -> obj
+    private HashMap<String, utils.RemoteObjectReference> obj_map = new HashMap<String, utils.RemoteObjectReference>(); // obj name -> obj
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_MASTER;
     private ObjectOutputStream oos;
@@ -39,15 +39,15 @@ public class Registry {
 	return list;
     }
 
-    public void bind(String serverIP_port, String url, Object o)
+    public void bind(String serverIP_port, String url, utils.RemoteObjectReference r)
     {
 	this.server_map.put(url, serverIP_port);
-	this.obj_map.put(url, o);
+	this.obj_map.put(url, r);
     }
 
-    public void rebind(String serverIP_port, String url, Object o) // currently identical to bind
+    public void rebind(String serverIP_port, String url, utils.RemoteObjectReference) // currently identical to bind
     {
-	this.bind(serverIP_port, url, o);
+	this.bind(serverIP_port, url, r);
     }
 
     public void unbind(String serverIP_port, String url)
@@ -77,17 +77,16 @@ public class Registry {
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
 	}
 	if (msg_type == MESSAGE_TYPE.LOOKUP) {
-	    // TODO:
-	    // see if a server has this object;
-	    // if so, forward the lookup message to the appropriate server (who will return the stub)
+	    // TODO: 
+	    // if it has this object: return remote object reference
 	    // set reply type
 	}
 	if (msg_type == MESSAGE_TYPE.BIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.getObj();
+	    utils.RemoteObjectReference r = msg.getRemote_ref();
 
-	    this.bind(serverIP_port, url, o);
+	    this.bind(serverIP_port, url, r);
 
 	    System.out.println(" > replying with RET_BIND message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_BIND);
@@ -95,9 +94,9 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.REBIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.getObj();
+	    utils.RemoteObjectReference r = msg.getRemote_ref();
 
-	    this.rebind(serverIP_port, url, o);
+	    this.rebind(serverIP_port, url, r);
 
 	    System.out.println(" > replying with RET_REBIND message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
@@ -105,7 +104,6 @@ public class Registry {
 	if (msg_type == MESSAGE_TYPE.UNBIND) {
 	    String serverIP_port = get_address(sock);
 	    String url = msg.get_url();
-	    Object o = msg.getObj();
 
 	    this.unbind(serverIP_port, url);
 

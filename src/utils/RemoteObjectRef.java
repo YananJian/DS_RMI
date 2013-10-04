@@ -10,7 +10,7 @@ import utils.Constants.MESSAGE_TYPE;
 
 public class RemoteObjectRef implements java.io.Serializable{
 	
-	private static String IP_adr;
+    private static String IP_adr;
     private static int Port;
     private int Obj_Key;
     private String Obj_Name;
