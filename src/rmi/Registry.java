@@ -25,7 +25,7 @@ public class Registry {
 
     private HashMap<String, RemoteObjectRef> obj_map = new HashMap<String, RemoteObjectRef>(); // obj name -> obj
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
-    private int port = utils.Constants.PORT_MASTER;
+    private int port = utils.Constants.PORT_REGISTER;
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private ServerSocket listener = null;

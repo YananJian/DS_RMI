@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import examples.*;
 import utils.Constants.MESSAGE_TYPE;
 
 public class RemoteObjectRef implements java.io.Serializable{
@@ -17,23 +18,26 @@ public class RemoteObjectRef implements java.io.Serializable{
     private String[] Interface_names;
     
 
-    public RemoteObjectRef(String ip, int port, int obj_key, String[] riname) 
+    public RemoteObjectRef(String ip, int port, int obj_key, String[] riname, String Obj_name) 
     {
     	setIP_adr(ip);
     	setPort(port);
     	setObj_Key(obj_key);
+    	setObj_Name(Obj_name);
     	setRemote_Interface_Name(riname);
     }
 
-    public static Object invoke(String func_name, Object params[])
+    public static Object invoke(String url, String func_name, Object params[])
     {
     	Object rets = null;
     	try {
-			Socket sock = new Socket(IP_adr, Port);
+			Socket sock = new Socket("0.0.0.0", 12346);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());			
 			Msg msg = new Msg();
 			msg.set_msg_tp(MESSAGE_TYPE.INVOKE);
+			msg.setObj_name(url);
+			
 			msg.setFunc_name(func_name);
 			msg.setParams(params);
 			oos.writeObject(msg);
@@ -56,11 +60,10 @@ public class RemoteObjectRef implements java.io.Serializable{
     // 
     public Object localise()
     {
-    	Object o = null;
-    	 
-        try {
-        	System.out.println("Obj name:"+Obj_Name);
-        	Class c = Class.forName(Obj_Name);
+    	Object o = null;   	 
+        try 
+        {
+        	Class<?> c = Class.forName("examples.Test_stub");
 			o = c.newInstance();
 			
 		} catch (InstantiationException e) {
@@ -74,23 +77,7 @@ public class RemoteObjectRef implements java.io.Serializable{
 			e.printStackTrace();
 		}
         return o;
-	// Implement this as you like: essentially you should 
-	// create a new stub object and returns it.
-	// Assume the stub class has the name e.g.
-	//
-	//       Remote_Interface_Name + "_stub".
-	//
-	// Then you can create a new stub as follows:
-	// 
-	//       Class c = Class.forName(Remote_Interface_Name + "_stub");
-	//       Object o = c.newinstance()
-	//
-	// For this to work, your stub should have a constructor without arguments.
-	// You know what it does when it is called: it gives communication module
-	// all what it got (use CM's static methods), including its method name, 
-	// arguments etc., in a marshalled form, and CM (yourRMI) sends it out to 
-	// another place. 
-	// Here let it return null.
+	
     }
 
 	public String getIP_adr() {
@@ -122,7 +109,7 @@ public class RemoteObjectRef implements java.io.Serializable{
 	}
 
 	public void setRemote_Interface_Name(String []remote_Interface_Name) {
-		Interface_names = remote_Interface_Name;
+		this.Interface_names = remote_Interface_Name;
 	}
 
 	public String getObj_Name() {
@@ -130,7 +117,7 @@ public class RemoteObjectRef implements java.io.Serializable{
 	}
 
 	public void setObj_Name(String obj_Name) {
-		Obj_Name = obj_Name;
+		this.Obj_Name = obj_Name;
 	}
 
 }

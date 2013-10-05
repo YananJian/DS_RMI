@@ -29,8 +29,10 @@ public class M_Registry
 			sock = new Socket(Host, Port);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 	    	ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+	    	
 	    	oos.writeObject(msg);
-	    	ret_msg = (utils.Msg)ois.readObject();
+	    	ret_msg = (Msg)ois.readObject();
+	    	
 	    	sock.close();
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
@@ -50,11 +52,13 @@ public class M_Registry
     {
     	// Connect to S_Registry, which is the unique registry on specified host
     	Msg msg = new Msg();
+    	Msg ret_msg;
     	msg.set_msg_tp(MESSAGE_TYPE.LOOKUP);
     	msg.setObj_name(serviceName);
     	
-    	msg = communicate(msg);
-		RemoteObjectRef ror = msg.getRemote_ref();
+    	ret_msg = communicate(msg);
+    	
+		RemoteObjectRef ror = ret_msg.getRemote_ref();
     	
 		// return ROR.
 		return ror;
@@ -68,8 +72,9 @@ public class M_Registry
     	msg.set_msg_tp(MESSAGE_TYPE.REBIND);
     	msg.setObj_name(serviceName);
     	msg.setRemote_ref(ror);
+    	
     	// it is locate request, with a service name.
-    	msg = communicate(msg);
+    	communicate(msg);
     	
     }
     
@@ -84,8 +89,8 @@ public class M_Registry
 
     public static void main(String args[])
     {
-    	String Host = "0.0.0.0";
-    	int port = 12345;
+    	String Host = Constants.IP_REGISTER;
+    	int port = Constants.PORT_REGISTER;
     	M_Registry m_registry = new M_Registry(Host, port);
     	m_registry.list();
     }

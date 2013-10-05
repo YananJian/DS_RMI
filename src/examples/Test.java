@@ -10,6 +10,6 @@ public class Test implements Remote {
 
 	public void test()
 	{
-		System.out.println("start test");
+		System.out.println("start test *********");
 	}
 }

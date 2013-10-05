@@ -4,8 +4,10 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.lang.*;
 
+import utils.Constants;
 import utils.Constants.MESSAGE_TYPE;
 import utils.Msg;
 import utils.RemoteObjectRef;
@@ -29,9 +31,12 @@ public class S_Registry implements Runnable {
 		if (msg.get_msg_tp() == MESSAGE_TYPE.LOOKUP)
 		{
 			String name = msg.getObj_name();
+			
+		
 			// suppose the remote object is in the registry
 			if (reg.get(name) != null)
 			{
+				
 				ret_msg.setRemote_ref(reg.get(name));	
 				ret_msg.set_msg_tp(MESSAGE_TYPE.RET_LOOKUP);
 				return ret_msg;
@@ -41,7 +46,9 @@ public class S_Registry implements Runnable {
 		else if (msg.get_msg_tp() == MESSAGE_TYPE.REBIND)
 		{
 			String host = msg.getIp() + ":" + Integer.toString(msg.getPort());
+			
 			reg.put(msg.getObj_name(), msg.getRemote_ref());
+			
 			reg_server.put(msg.getObj_name(), host);
 			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
 		}
@@ -62,8 +69,7 @@ public class S_Registry implements Runnable {
                     ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
                     ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
                 	
-                	Msg msg = (Msg) ois.readObject();
-                	System.out.println("Got the msg");
+                	Msg msg = (Msg) ois.readObject();              	
                 	System.out.println(sock.getInetAddress());
                 	System.out.println(sock.getPort());
                 	msg.setIp(sock.getInetAddress().getHostAddress());
@@ -92,7 +98,7 @@ public class S_Registry implements Runnable {
 	
 	public static void main(String args[])
 	{	
-		S_Registry s_registry = new S_Registry(12345);
+		S_Registry s_registry = new S_Registry(Constants.PORT_REGISTER);
 		Thread t = new Thread(s_registry);
 		t.start();
 	}
