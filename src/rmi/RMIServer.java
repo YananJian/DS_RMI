@@ -70,14 +70,12 @@ public class RMIServer implements Runnable
     	System.out.println(" > invoking "+obj_name+" on func:"+func_name);
     	
     	Object obj = obj_map.get(obj_name);   	
-    	Object params = msg.getParams();
+    	Object params[] = msg.getParams();
     	Object ret_val = null;
     	try {
-    		
-    		  //Method method = obj.getClass().getMethod(func_name, (Class<?>[]) params);
-    		  Method method = obj.getClass().getMethod(func_name);
-    		  //ret_val = method.invoke(obj, params);
-    		  ret_val = method.invoke(obj);
+    		  Class para[] = new Class[]{String.class}; 
+    		  Method ms = obj.getClass().getDeclaredMethod(func_name, para);
+    		  ret_val = ms.invoke(obj, params);
     		  ret_msg.setRets(ret_val);
     		 
     		} catch (SecurityException e) {

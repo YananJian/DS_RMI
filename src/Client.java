@@ -17,13 +17,13 @@ public class Client {
 	public static void main(String args[])
 	{		
     	registry = new M_Registry(r_ip, r_port);
-    	
-    	
+    	  	
     	try {
 			RemoteObjectRef ror = M_Registry.lookup(url);
 			
 			TestI t = (TestI) ror.localise();
-			t.test();
+			String s = t.test("Yanan Jian");
+			System.out.println(s);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

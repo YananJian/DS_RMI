@@ -13,10 +13,11 @@ public class Test_stub implements TestI{
 	
 	private String url = "examples.Test";
 	
-	public void test()
-	{
-	    String s[] = {};
-	    RemoteObjectRef.invoke(url, "test", s);
+	public String test(String t)
+	{	
+		String []params = {t};
+	    String ret_val = (String) RemoteObjectRef.invoke(url, "test", params);
+	    return ret_val;
 	    //System.out.println("This is a test!");
 	}
 }
