@@ -1,7 +1,11 @@
+/*
+ make dummy version that starts up
+ sends bind / rebind / unbind messages to registry; listens for ack...
+      server should start up, bind SOMETHING in main()
+*/
+
 package rmi;
-// make dummy version that starts up
-// sends bind / rebind / unbind messages to registry; listens for ack...
-//      server should start up, bind SOMETHING in main()
+
 import utils.*;
 
 import java.io.EOFException;
@@ -25,14 +29,14 @@ public class RMIServer implements Runnable
     	obj_map = new Hashtable<String, Object>();
     	RMIServer.port = port;
     	try {
-			listener = new ServerSocket(port);
-			Thread t = new Thread (this);
-	    	t.start();
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}   	
+	    listener = new ServerSocket(port);
+	    Thread t = new Thread (this);
+	    t.start();
+	    
+	} catch (IOException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}   	
     }
     
     
@@ -119,8 +123,8 @@ public class RMIServer implements Runnable
     {
     	if (listener == null)
     	{
-    		System.out.println("Server Socket Can not establish");
-    		return;
+	    System.out.println("Server Socket Can not establish");
+	    return;
     	}
     	while(true)
     	{
@@ -131,32 +135,29 @@ public class RMIServer implements Runnable
     			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
     			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
     			Msg msg = (Msg) ois.readObject();
-    			msg = this.process(msg);
-    			oos.writeObject(msg);
+    			Msg ret_msg = this.process(msg);
+    			oos.writeObject(ret_msg);
     			
     		 } catch (ClassNotFoundException e) {
     			e.printStackTrace();
     		 } catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	    }
     	}
     	
     }
     
     @Override
 	public void run() {
-		// TODO Auto-generated method stub
-		listen();
-	}
-   
+	// TODO Auto-generated method stub
+	listen();
+    }
+    
     public static void main(String args[])
     {
     	
-    	
+	
     }
-
-
-
 	
 }

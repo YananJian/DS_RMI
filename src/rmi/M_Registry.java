@@ -1,3 +1,11 @@
+/*
+each server will have an instance of M_Registry
+should be able to call all Registry fns: bind, rebind, unbind, lookup, list
+M_Registry will send appropriate messages to S_Registry
+for lookup and list, must wait for reply from S_Registry and return some value
+    (speed of M_Registry dependent on speed of S_Registry)
+*/
+
 package rmi;
 
 import java.util.*;
@@ -6,19 +14,24 @@ import java.io.*;
 
 import utils.Constants.MESSAGE_TYPE;
 import utils.RemoteObjectRef;
+import utils.Constants.*;
 import utils.*;
 
 public class M_Registry 
 { 
-    // registry holds its port and host, and connects to it each time. 
-    static String Host;
-    static int Port;
-    
-    // ultra simple constructor.
+
+    // IP and Port of S_Registry
+    //static String S_IP = utils.Constants.S_IP;
+    //static int S_Port utils.Constants.S_Port;;
+
+    // own IP and Port
+    static String M_IP;
+    static int M_Port;
+
     public M_Registry(String IPAdr, int PortNum)
     {
-    	Host = IPAdr;
-    	Port = PortNum;
+    	M_IP = IPAdr;
+    	M_Port = PortNum;
     }
 
     public static Msg communicate(Msg msg)
@@ -26,7 +39,7 @@ public class M_Registry
     	Socket sock;
     	Msg ret_msg = null;
 		try {
-			sock = new Socket(Host, Port);
+			sock = new Socket(M_IP, M_Port);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 	    	ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
 	    	
@@ -44,17 +57,24 @@ public class M_Registry
 		// TODO Auto-generated catch block
     		e.printStackTrace();
     	}	
-		return ret_msg;
+	return ret_msg;
+    }
+
+    public Vector<String> list()
+    {
+	utils.Msg msg = new utils.Msg();
+	msg.set_msg_tp(MESSAGE_TYPE.LIST);
+	msg = communicate(msg);
+	return msg.get_list();
     }
     
     // returns the ROR (if found) or null (if else)
-    public static RemoteObjectRef lookup(String serviceName) throws IOException
+    public static RemoteObjectRef lookup(String url) throws IOException
     {
-    	// Connect to S_Registry, which is the unique registry on specified host
     	Msg msg = new Msg();
     	Msg ret_msg;
     	msg.set_msg_tp(MESSAGE_TYPE.LOOKUP);
-    	msg.setObj_name(serviceName);
+    	msg.setObj_name(url);
     	
     	ret_msg = communicate(msg);
     	
@@ -62,30 +82,41 @@ public class M_Registry
     	
 		// return ROR.
 		return ror;
+	}
+
+    // bind a ROR. ROR can be null. 
+    public void bind(String url, RemoteObjectRef ror) throws IOException
+    {
+    	utils.Msg msg = new utils.Msg();
+    	msg.set_msg_tp(MESSAGE_TYPE.BIND);
+    	msg.setObj_name(url);
+    	msg.set_url(url);
+    	msg.setRemote_ref(ror);
+    	msg = communicate(msg);	
     }
 
-    // rebind a ROR. ROR can be null. again no check, on this or whatever. 
-    // I hate this but have no time.
-    public void rebind(String serviceName, RemoteObjectRef ror) throws IOException
+    // rebind a ROR. ROR can be null.
+    public void rebind(String url, RemoteObjectRef ror) throws IOException
     {
     	utils.Msg msg = new utils.Msg();
     	msg.set_msg_tp(MESSAGE_TYPE.REBIND);
-    	msg.setObj_name(serviceName);
+    	msg.set_url(url);
     	msg.setRemote_ref(ror);
-    	
+    	msg.setObj_name(url);
     	// it is locate request, with a service name.
     	communicate(msg);
     	
     }
     
-	public void list()
-	{
-		utils.Msg msg = new utils.Msg();
-		msg.set_msg_tp(MESSAGE_TYPE.LIST);
-		// it is locate request, with a service name.
-		msg = communicate(msg);
+    // unbind a url.
+    public void unbind(String url) throws IOException
+    {
+    	utils.Msg msg = new utils.Msg();
+    	msg.set_msg_tp(MESSAGE_TYPE.UNBIND);
+    	msg.set_url(url);
+    	msg.setObj_name(url);
+    	msg = communicate(msg);	
     }
-
 
     public static void main(String args[])
     {
@@ -94,5 +125,6 @@ public class M_Registry
     	M_Registry m_registry = new M_Registry(Host, port);
     	m_registry.list();
     }
+
 } 
   

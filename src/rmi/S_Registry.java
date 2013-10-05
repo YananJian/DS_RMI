@@ -32,7 +32,6 @@ public class S_Registry implements Runnable {
 		{
 			String name = msg.getObj_name();
 			
-		
 			// suppose the remote object is in the registry
 			if (reg.get(name) != null)
 			{
@@ -50,6 +49,7 @@ public class S_Registry implements Runnable {
 			reg.put(msg.getObj_name(), msg.getRemote_ref());
 			
 			reg_server.put(msg.getObj_name(), host);
+			System.out.println(" > Putting remote object "+msg.getObj_name());
 			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
 		}
 		
@@ -70,8 +70,8 @@ public class S_Registry implements Runnable {
                     ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
                 	
                 	Msg msg = (Msg) ois.readObject();              	
-                	System.out.println(sock.getInetAddress());
-                	System.out.println(sock.getPort());
+                	System.out.println(" > connection from host:" + sock.getInetAddress()+":"+sock.getPort());
+                	
                 	msg.setIp(sock.getInetAddress().getHostAddress());
                 	msg.setPort(sock.getPort());
                 	Msg ret_msg = this.process(msg);  
@@ -100,6 +100,7 @@ public class S_Registry implements Runnable {
 	{	
 		S_Registry s_registry = new S_Registry(Constants.PORT_REGISTER);
 		Thread t = new Thread(s_registry);
+		System.out.println(" > Register started");
 		t.start();
 	}
 }

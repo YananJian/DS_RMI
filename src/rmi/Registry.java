@@ -1,16 +1,4 @@
 package rmi;
-// HashMap<String, Remote> : name of obj (i.e. url of obj) -> remote obj ref of obj
-// Communicates with client stubs, server skeleton(s):
-//      can return list of available object names (urls) (client) - list()
-//      can send a serialized stub of object (client) - lookup() ?
-//      can update Map of available stuff (server) - bind(), rebind(), unbind()
-
-// bind(url, object);
-// unbind(url, object); 
-
-// Message types will need to include: 
-// list, bind, rebind, unbind, lookup 
-// ret_list, ack_bind, ack_rebind, ack_unbind, ret_lookup
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -26,6 +14,7 @@ public class Registry {
     private HashMap<String, RemoteObjectRef> obj_map = new HashMap<String, RemoteObjectRef>(); // obj name -> obj
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_REGISTER;
+
     private ObjectOutputStream oos;
     private ObjectInputStream ois;
     private ServerSocket listener = null;
