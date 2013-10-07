@@ -109,7 +109,7 @@ public class Registry {
     public void listen() throws IOException, ClassNotFoundException
     {
 	while (true) {
-	    System.out.println("Listening for messages...");
+	    System.out.println("Registry has started up. Listening for messages...");
 	    Socket sock = listener.accept();
 	    try {
 		ois = new ObjectInputStream(sock.getInputStream());

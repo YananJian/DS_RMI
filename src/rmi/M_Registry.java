@@ -1,9 +1,9 @@
 /*
-each server will have an instance of M_Registry
+each server and client will have an instance of M_Registry
 should be able to call all Registry fns: bind, rebind, unbind, lookup, list
-M_Registry will send appropriate messages to S_Registry
-for lookup and list, must wait for reply from S_Registry and return some value
-    (speed of M_Registry dependent on speed of S_Registry)
+M_Registry will send appropriate messages to Registry
+for lookup and list, must wait for reply from Registry and return some value
+    (speed of M_Registry dependent on speed of Registry)
 */
 
 package rmi;
@@ -38,24 +38,24 @@ public class M_Registry
     {
     	Socket sock;
     	Msg ret_msg = null;
-		try {
-			sock = new Socket(M_IP, M_Port);
-			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
-	    	ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
-	    	
-	    	oos.writeObject(msg);
-	    	ret_msg = (Msg)ois.readObject();
-	    	
-	    	sock.close();
-		} catch (UnknownHostException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}catch (ClassNotFoundException e) {
-		// TODO Auto-generated catch block
-    		e.printStackTrace();
+	try {
+	    sock = new Socket(M_IP, M_Port);
+	    ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+	    ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+	    
+	    oos.writeObject(msg);
+	    ret_msg = (Msg)ois.readObject();
+	    
+	    sock.close();
+	} catch (UnknownHostException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	} catch (IOException e1) {
+	    // TODO Auto-generated catch block
+	    e1.printStackTrace();
+	}catch (ClassNotFoundException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
     	}	
 	return ret_msg;
     }
