@@ -76,13 +76,10 @@ public class M_Registry
     	msg.set_msg_tp(MESSAGE_TYPE.LOOKUP);
     	msg.setObj_name(url);
     	
-    	ret_msg = communicate(msg);
-    	
-		RemoteObjectRef ror = ret_msg.getRemote_ref();
-    	
-		// return ROR.
-		return ror;
-	}
+    	ret_msg = communicate(msg);    	
+	RemoteObjectRef ror = ret_msg.getRemote_ref();    	
+	return ror;
+    }
 
     // bind a ROR. ROR can be null. 
     public void bind(String url, RemoteObjectRef ror) throws IOException

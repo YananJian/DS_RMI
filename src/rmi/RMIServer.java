@@ -43,7 +43,7 @@ public class RMIServer implements Runnable
     public static RMIServer getInstance(int port)
     {
     	if (rserver == null)
-    		rserver = new RMIServer(port);
+	    rserver = new RMIServer(port);
     	return rserver;
     }
     
@@ -52,11 +52,11 @@ public class RMIServer implements Runnable
     	Class<?> interfaces[] = obj.getClass().getInterfaces();
     	String remote_name = obj.getClass().toString() + "_stub";
     	String[] interface_names=new String[interfaces.length];
-		for(int i=0;i<interfaces.length;i++){
-			interface_names[i]=interfaces[i].getName();
-			System.out.println(" > Creating Stub, interface:"+interface_names[i]);
-		}
-		obj_map.put(url, obj);
+	for(int i=0;i<interfaces.length;i++){
+	    interface_names[i]=interfaces[i].getName();
+	    System.out.println(" > Creating Stub, interface:"+interface_names[i]);
+	}
+	obj_map.put(url, obj);
     	RemoteObjectRef ror = new RemoteObjectRef(host, port, 0, interface_names,url);
     	//ror.setObj_Name(url);
     	return ror;
@@ -73,25 +73,25 @@ public class RMIServer implements Runnable
     	Object params[] = msg.getParams();
     	Object ret_val = null;
     	try {
-    		  Class para[] = new Class[]{String.class}; 
-    		  Method ms = obj.getClass().getDeclaredMethod(func_name, para);
-    		  ret_val = ms.invoke(obj, params);
-    		  ret_msg.setRets(ret_val);
-    		 
-    		} catch (SecurityException e) {
-    		  // ...
-    		} catch (NoSuchMethodException e) {
-    		  // ...
-    		} catch (IllegalArgumentException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+	    Class para[] = new Class[]{String.class}; 
+	    Method ms = obj.getClass().getDeclaredMethod(func_name, para);
+	    ret_val = ms.invoke(obj, params);
+	    ret_msg.setRets(ret_val);
+	    
+	} catch (SecurityException e) {
+	    // ...
+	} catch (NoSuchMethodException e) {
+	    // ...
+	} catch (IllegalArgumentException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (IllegalAccessException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	} catch (InvocationTargetException e) {
+	    // TODO Auto-generated catch block
+	    e.printStackTrace();
+	}
     	
     	return ret_msg;
     }
@@ -102,18 +102,18 @@ public class RMIServer implements Runnable
     	Msg ret_msg = new Msg();
     	if (tp == Constants.MESSAGE_TYPE.LOOKUP)
     	{
-    		RemoteObjectRef ror = create_ror(msg.getObj_name(), msg.getObj());
-    		
-    		ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
-    		ret_msg.setRemote_ref(ror);
-    		return ret_msg;
-   		
+	    RemoteObjectRef ror = create_ror(msg.getObj_name(), msg.getObj());
+	    
+	    ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
+	    ret_msg.setRemote_ref(ror);
+	    return ret_msg;
+	    
     	}
     	else if (tp == Constants.MESSAGE_TYPE.INVOKE)
-    	{
+	    {
     		ret_msg = invoke(msg);  		
     		return ret_msg;
-    	}
+	    }
     	return ret_msg;
     }
     
@@ -126,19 +126,19 @@ public class RMIServer implements Runnable
     	}
     	while(true)
     	{
-    		 System.out.println(" > Listening for messages...");  		 
-    		 try 
-    		 {
-    			Socket sock = listener.accept();
-    			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
-    			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
-    			Msg msg = (Msg) ois.readObject();
-    			Msg ret_msg = this.process(msg);
-    			oos.writeObject(ret_msg);
-    			
-    		 } catch (ClassNotFoundException e) {
-    			e.printStackTrace();
-    		 } catch (IOException e) {
+	    System.out.println(" > Listening for messages...");  		 
+	    try 
+		{
+		    Socket sock = listener.accept();
+		    ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+		    ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+		    Msg msg = (Msg) ois.readObject();
+		    Msg ret_msg = this.process(msg);
+		    oos.writeObject(ret_msg);
+		    
+		} catch (ClassNotFoundException e) {
+		e.printStackTrace();
+	    } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }

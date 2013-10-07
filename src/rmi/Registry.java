@@ -11,7 +11,7 @@ import utils.Constants.*;
 
 public class Registry {
 
-    private HashMap<String, RemoteObjectRef> obj_map = new HashMap<String, RemoteObjectRef>(); // obj name -> obj
+    private HashMap<String, RemoteObjectRef> obj_map = new HashMap<String, RemoteObjectRef>(); // obj name -> ROR
     private HashMap<String, String> server_map = new HashMap<String, String>(); // obj name -> serverIP_port
     private int port = utils.Constants.PORT_REGISTER;
 
