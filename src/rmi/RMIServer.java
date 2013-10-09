@@ -18,8 +18,9 @@ import java.lang.reflect.*;
 
 public class RMIServer implements Runnable
 {
-    static String host = "0.0.0.0";
-    static int port = 12346;
+    static String host;
+    static int port;
+
     private ServerSocket listener = null;
     private static RMIServer rserver = null;
     private static Hashtable<String, Object> obj_map = null;
@@ -27,6 +28,13 @@ public class RMIServer implements Runnable
     private RMIServer(int port)
     {
     	obj_map = new Hashtable<String, Object>();
+    	try {
+			host = InetAddress.getLocalHost().getHostAddress();
+			System.out.println("Get host address:"+host);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     	RMIServer.port = port;
     	try {
 	    listener = new ServerSocket(port);
@@ -43,21 +51,42 @@ public class RMIServer implements Runnable
     public static RMIServer getInstance(int port)
     {
     	if (rserver == null)
-	    rserver = new RMIServer(port);
+    		rserver = new RMIServer(port);
     	return rserver;
     }
     
+    public String[] iter_interfaces(Class<?> interfaces[])
+    {
+    	String []names = {};
+    	for (int i = 0; i< interfaces.length; i++)
+    	{
+    		Class<?> sub_ifs[] = interfaces[i].getInterfaces();
+    		if (sub_ifs.length > 0)
+    			;
+    		
+    	}
+    	return names;
+    }
     public RemoteObjectRef create_ror(String url, Object obj)
     {
     	Class<?> interfaces[] = obj.getClass().getInterfaces();
+    	Class<?> sub_interfaces[] = {};
     	String remote_name = obj.getClass().toString() + "_stub";
     	String[] interface_names=new String[interfaces.length];
-	for(int i=0;i<interfaces.length;i++){
-	    interface_names[i]=interfaces[i].getName();
-	    System.out.println(" > Creating Stub, interface:"+interface_names[i]);
-	}
-	obj_map.put(url, obj);
+		for(int i=0;i<interfaces.length;i++){
+			interface_names[i]=interfaces[i].getName();
+			sub_interfaces = interfaces[i].getInterfaces();
+			for (int j = 0; j<sub_interfaces.length; j++)
+				{
+				System.out.println("Sub interfaces:"+sub_interfaces[i].getName());
+				
+				}
+			iter_interfaces(sub_interfaces);
+			System.out.println(" > Creating Stub, interface:"+interface_names[i]);
+		}
+		obj_map.put(url, obj);
     	RemoteObjectRef ror = new RemoteObjectRef(host, port, 0, interface_names,url);
+    	System.out.println("Creating ROR using host address:"+host);
     	//ror.setObj_Name(url);
     	return ror;
     }
@@ -73,25 +102,25 @@ public class RMIServer implements Runnable
     	Object params[] = msg.getParams();
     	Object ret_val = null;
     	try {
-	    Class para[] = new Class[]{String.class}; 
-	    Method ms = obj.getClass().getDeclaredMethod(func_name, para);
-	    ret_val = ms.invoke(obj, params);
-	    ret_msg.setRets(ret_val);
-	    
-	} catch (SecurityException e) {
-	    // ...
-	} catch (NoSuchMethodException e) {
-	    // ...
-	} catch (IllegalArgumentException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (IllegalAccessException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (InvocationTargetException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
+    		  Class para[] = new Class[]{String.class}; 
+    		  Method ms = obj.getClass().getDeclaredMethod(func_name, para);
+    		  ret_val = ms.invoke(obj, params);
+    		  ret_msg.setRets(ret_val);
+    		 
+    		} catch (SecurityException e) {
+    		  // ...
+    		} catch (NoSuchMethodException e) {
+    		  // ...
+    		} catch (IllegalArgumentException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
     	
     	return ret_msg;
     }
@@ -102,18 +131,18 @@ public class RMIServer implements Runnable
     	Msg ret_msg = new Msg();
     	if (tp == Constants.MESSAGE_TYPE.LOOKUP)
     	{
-	    RemoteObjectRef ror = create_ror(msg.getObj_name(), msg.getObj());
-	    
-	    ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
-	    ret_msg.setRemote_ref(ror);
-	    return ret_msg;
-	    
+    		RemoteObjectRef ror = create_ror(msg.getObj_name(), msg.getObj());
+    		
+    		ret_msg.set_msg_tp(Constants.MESSAGE_TYPE.RET_LOOKUP);
+    		ret_msg.setRemote_ref(ror);
+    		return ret_msg;
+   		
     	}
     	else if (tp == Constants.MESSAGE_TYPE.INVOKE)
-	    {
+    	{
     		ret_msg = invoke(msg);  		
     		return ret_msg;
-	    }
+    	}
     	return ret_msg;
     }
     
@@ -126,19 +155,19 @@ public class RMIServer implements Runnable
     	}
     	while(true)
     	{
-	    System.out.println("RMIServer has started up. Listening for messages...");  		 
-	    try 
-		{
-		    Socket sock = listener.accept();
-		    ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
-		    ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
-		    Msg msg = (Msg) ois.readObject();
-		    Msg ret_msg = this.process(msg);
-		    oos.writeObject(ret_msg);
-		    
-		} catch (ClassNotFoundException e) {
-		e.printStackTrace();
-	    } catch (IOException e) {
+    		 System.out.println(" > Listening for messages...");  		 
+    		 try 
+    		 {
+    			Socket sock = listener.accept();
+    			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
+    			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
+    			Msg msg = (Msg) ois.readObject();
+    			Msg ret_msg = this.process(msg);
+    			oos.writeObject(ret_msg);
+    			
+    		 } catch (ClassNotFoundException e) {
+    			e.printStackTrace();
+    		 } catch (IOException e) {
 		// TODO Auto-generated catch block
 		e.printStackTrace();
 	    }
@@ -146,33 +175,19 @@ public class RMIServer implements Runnable
     	
     }
     
-
     @Override
 	public void run() {
 	// TODO Auto-generated method stub
 	listen();
     }
 
-    /*
-    public void connect() throws InterruptedException, ClassNotFoundException
-    {
-	try {
-	    listener = new ServerSocket(this.port);
-	    this.listen();
-	} catch (UnknownHostException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	} catch (IOException e) {
-	    // TODO Auto-generated catch block
-	    e.printStackTrace();
-	}
-    }
-    */
     
-    public static void main(String args[]) throws InterruptedException, ClassNotFoundException
+    public static void main(String args[])
     {
-	//RMIServer rmiserver = new RMIServer(port);
-	//rmiserver.connect();
+
+    	
+	
+
     }
 	
 }

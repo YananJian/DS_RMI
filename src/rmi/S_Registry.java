@@ -4,6 +4,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Vector;
 import java.util.Map.Entry;
 import java.lang.*;
 
@@ -38,6 +40,7 @@ public class S_Registry implements Runnable {
 				
 				ret_msg.setRemote_ref(reg.get(name));	
 				ret_msg.set_msg_tp(MESSAGE_TYPE.RET_LOOKUP);
+				
 				return ret_msg;
 			}
 			
@@ -49,8 +52,30 @@ public class S_Registry implements Runnable {
 			reg.put(msg.getObj_name(), msg.getRemote_ref());
 			
 			reg_server.put(msg.getObj_name(), host);
-			System.out.println(" > Putting remote object "+msg.getObj_name());
+			System.out.println(" > Rebinding remote object "+msg.getObj_name());
+			
 			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_REBIND);
+		}
+		else if (msg.get_msg_tp() == MESSAGE_TYPE.BIND)
+		{
+			String host = msg.getIp() + ":" + Integer.toString(msg.getPort());
+			
+			reg.put(msg.getObj_name(), msg.getRemote_ref());
+			
+			reg_server.put(msg.getObj_name(), host);
+			System.out.println(" > Binding remote object "+msg.getObj_name());
+			
+			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_BIND);
+		}
+		else if (msg.get_msg_tp() == MESSAGE_TYPE.LIST)
+		{	
+			Vector<String> list = new Vector<String>();
+			for (String key : reg.keySet()) 
+			{
+			    list.add(key);
+			}
+			ret_msg.set_list(list);
+			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_BIND);
 		}
 		
 		
@@ -98,7 +123,22 @@ public class S_Registry implements Runnable {
 	
 	public static void main(String args[])
 	{	
-		S_Registry s_registry = new S_Registry(Constants.PORT_REGISTER);
+		int port;
+		if (args.length < 1)
+		{
+			System.out.println("Wrong arguments, Format: java rmi/S_Registry <port of S_Registry>");
+			return;
+		}
+		try
+		{
+			port = Integer.parseInt(args[0]);
+		}
+		catch(NumberFormatException e)
+		{
+			System.out.println("Please input valid port");
+			return;
+		}
+		S_Registry s_registry = new S_Registry(port);
 		Thread t = new Thread(s_registry);
 		System.out.println(" > Register started");
 		t.start();
