@@ -39,6 +39,7 @@ public class M_Registry
     	Socket sock;
     	Msg ret_msg = null;
 		try {
+			System.out.println("REGISTER IP:"+M_IP);
 			sock = new Socket(M_IP, M_Port);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 	    	ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());

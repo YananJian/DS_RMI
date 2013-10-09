@@ -10,7 +10,7 @@ import utils.*;
 public class Client {
 
 	static M_Registry registry = null;
-	static String r_ip = "0.0.0.0";
+	static String r_ip = "128.2.13.143";
 	static int r_port = 12345;
 	static String url = "examples.Test";
 	
