@@ -39,7 +39,6 @@ public class M_Registry
     	Socket sock;
     	Msg ret_msg = null;
 		try {
-			System.out.println("REGISTER IP:"+M_IP);
 			sock = new Socket(M_IP, M_Port);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 	    	ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());
@@ -120,10 +119,7 @@ public class M_Registry
 
     public static void main(String args[])
     {
-    	String Host = Constants.IP_REGISTER;
-    	int port = Constants.PORT_REGISTER;
-    	M_Registry m_registry = new M_Registry(Host, port);
-    	m_registry.list();
+    	
     }
 
 } 

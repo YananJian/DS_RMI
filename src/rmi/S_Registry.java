@@ -123,7 +123,22 @@ public class S_Registry implements Runnable {
 	
 	public static void main(String args[])
 	{	
-		S_Registry s_registry = new S_Registry(Constants.PORT_REGISTER);
+		int port;
+		if (args.length < 1)
+		{
+			System.out.println("Wrong arguments, Format: java rmi/S_Registry <port of S_Registry>");
+			return;
+		}
+		try
+		{
+			port = Integer.parseInt(args[0]);
+		}
+		catch(NumberFormatException e)
+		{
+			System.out.println("Please input valid port");
+			return;
+		}
+		S_Registry s_registry = new S_Registry(port);
 		Thread t = new Thread(s_registry);
 		System.out.println(" > Register started");
 		t.start();

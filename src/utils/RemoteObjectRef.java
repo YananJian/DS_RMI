@@ -34,8 +34,7 @@ public class RemoteObjectRef implements java.io.Serializable{
     {
     	Object rets = null;
     	try {
-			System.out.println("Server ip_addr:"+serverip);
-			System.out.println(serverport);
+			
 			Socket sock = new Socket(serverip, serverport);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());			
@@ -71,7 +70,7 @@ public class RemoteObjectRef implements java.io.Serializable{
         	Class<?> c = Class.forName("examples.Test_stub");
 			
 			Constructor<?> constructor = c.getConstructor(String.class, int.class);
-			System.out.println("In Remote Object localise, server ip:"+IP_adr);
+			
 			o = constructor.newInstance(IP_adr, Port);
 			
 		} catch (InstantiationException e) {
