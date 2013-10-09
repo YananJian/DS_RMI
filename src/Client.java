@@ -4,7 +4,6 @@ import java.io.*;
 
 import examples.*;
 import rmi.M_Registry;
-import rmi.Registry;
 import utils.*;
 
 public class Client {
