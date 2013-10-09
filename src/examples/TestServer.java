@@ -15,7 +15,7 @@ public class TestServer implements Remote{
     private static int server_port = 12346;
     
     public static void main(String[] args) {
-	// TODO Auto-generated method stub
+
 	M_Registry register = new M_Registry(Constants.IP_REGISTER, Constants.PORT_REGISTER);
 	Test test = new Test();
 	
@@ -27,11 +27,12 @@ public class TestServer implements Remote{
 	RemoteObjectRef ror = rms.create_ror(url, test);
 	
 	try {
-	    register.rebind(url, ror);
+	    register.bind(url, ror);
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
 	    e.printStackTrace();
 	}
+
     }
     
 }

@@ -19,7 +19,7 @@ import java.lang.reflect.*;
 public class RMIServer implements Runnable
 {
     static String host = "0.0.0.0";
-    static int port = 10000;
+    static int port = 12346;
     private ServerSocket listener = null;
     private static RMIServer rserver = null;
     private static Hashtable<String, Object> obj_map = null;
@@ -150,9 +150,10 @@ public class RMIServer implements Runnable
     @Override
 	public void run() {
 	// TODO Auto-generated method stub
-	//listen();
+	listen();
     }
 
+    /*
     public void connect() throws InterruptedException, ClassNotFoundException
     {
 	try {
@@ -166,12 +167,12 @@ public class RMIServer implements Runnable
 	    e.printStackTrace();
 	}
     }
-
+    */
     
     public static void main(String args[]) throws InterruptedException, ClassNotFoundException
     {
-	RMIServer rmiserver = new RMIServer(port);
-	rmiserver.connect();
+	//RMIServer rmiserver = new RMIServer(port);
+	//rmiserver.connect();
     }
 	
 }
