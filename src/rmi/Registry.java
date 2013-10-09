@@ -61,7 +61,7 @@ public class Registry {
 	utils.Constants.MESSAGE_TYPE msg_type = msg.get_msg_tp();
 
 	if (msg_type == MESSAGE_TYPE.LIST) { 
-	    reply.set_list(this.list());
+	    /*reply.set_list(this.list());*/
 	    System.out.println(" > replying with RET_LIST message");
 	    reply.set_msg_tp(MESSAGE_TYPE.RET_LIST);
 	}

@@ -3,6 +3,8 @@ package utils;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -11,8 +13,9 @@ import utils.Constants.MESSAGE_TYPE;
 
 public class RemoteObjectRef implements java.io.Serializable{
 	
-    private static String IP_adr;
-    private static int Port;
+    
+	private String IP_adr;
+    private int Port;
     private int Obj_Key;
     private String Obj_Name;
     private String[] Interface_names;
@@ -27,11 +30,13 @@ public class RemoteObjectRef implements java.io.Serializable{
     	setRemote_Interface_Name(riname);
     }
 
-    public static Object invoke(String url, String func_name, Object params[])
+    public static Object invoke(String url, String func_name, Object params[],String serverip, int serverport)
     {
     	Object rets = null;
     	try {
-			Socket sock = new Socket("0.0.0.0", 12346);
+			System.out.println("Server ip_addr:"+serverip);
+			System.out.println(serverport);
+			Socket sock = new Socket(serverip, serverport);
 			ObjectOutputStream oos = new ObjectOutputStream(sock.getOutputStream());
 			ObjectInputStream ois = new ObjectInputStream(sock.getInputStream());			
 			Msg msg = new Msg();
@@ -64,7 +69,10 @@ public class RemoteObjectRef implements java.io.Serializable{
         try 
         {
         	Class<?> c = Class.forName("examples.Test_stub");
-			o = c.newInstance();
+			
+			Constructor<?> constructor = c.getConstructor(String.class, int.class);
+			System.out.println("In Remote Object localise, server ip:"+IP_adr);
+			o = constructor.newInstance(IP_adr, Port);
 			
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
@@ -73,6 +81,18 @@ public class RemoteObjectRef implements java.io.Serializable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

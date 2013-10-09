@@ -20,7 +20,7 @@ public class Client {
     	  	
     	try {
 			RemoteObjectRef ror = M_Registry.lookup(url);
-			
+			System.out.println("In Client, server ip:"+ror.getIP_adr());
 			TestI t = (TestI) ror.localise();
 			String s = t.test("Yanan Jian");
 			System.out.println(s);

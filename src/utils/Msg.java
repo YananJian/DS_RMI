@@ -1,6 +1,8 @@
 package utils;
 
 import utils.Constants.MESSAGE_TYPE;
+
+import java.util.Set;
 import java.util.Vector;
 
 public class Msg implements java.io.Serializable{
@@ -27,9 +29,9 @@ public class Msg implements java.io.Serializable{
     	return this.msg_type;
     }
 
-    public void set_list(Vector<String> list)
+    public void set_list(Vector<String> set)
     {
-	this.list = list;
+	this.list = set;
     }
 
     public Vector<String> get_list() 

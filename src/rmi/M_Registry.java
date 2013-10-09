@@ -79,7 +79,6 @@ public class M_Registry
     	ret_msg = communicate(msg);
     	
 		RemoteObjectRef ror = ret_msg.getRemote_ref();
-    	
 		// return ROR.
 		return ror;
 	}

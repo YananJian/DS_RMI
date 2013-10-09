@@ -18,8 +18,8 @@ import java.lang.reflect.*;
 
 public class RMIServer implements Runnable
 {
-    static String host = "0.0.0.0";
-    static int port = 12346;
+    static String host;
+    static int port;
     private ServerSocket listener = null;
     private static RMIServer rserver = null;
     private static Hashtable<String, Object> obj_map = null;
@@ -27,6 +27,13 @@ public class RMIServer implements Runnable
     private RMIServer(int port)
     {
     	obj_map = new Hashtable<String, Object>();
+    	try {
+			host = InetAddress.getLocalHost().getHostAddress();
+			System.out.println("Get host address:"+host);
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     	RMIServer.port = port;
     	try {
 	    listener = new ServerSocket(port);
@@ -47,17 +54,38 @@ public class RMIServer implements Runnable
     	return rserver;
     }
     
+    public String[] iter_interfaces(Class<?> interfaces[])
+    {
+    	String []names = {};
+    	for (int i = 0; i< interfaces.length; i++)
+    	{
+    		Class<?> sub_ifs[] = interfaces[i].getInterfaces();
+    		if (sub_ifs.length > 0)
+    			;
+    		
+    	}
+    	return names;
+    }
     public RemoteObjectRef create_ror(String url, Object obj)
     {
     	Class<?> interfaces[] = obj.getClass().getInterfaces();
+    	Class<?> sub_interfaces[] = {};
     	String remote_name = obj.getClass().toString() + "_stub";
     	String[] interface_names=new String[interfaces.length];
 		for(int i=0;i<interfaces.length;i++){
 			interface_names[i]=interfaces[i].getName();
+			sub_interfaces = interfaces[i].getInterfaces();
+			for (int j = 0; j<sub_interfaces.length; j++)
+				{
+				System.out.println("Sub interfaces:"+sub_interfaces[i].getName());
+				
+				}
+			iter_interfaces(sub_interfaces);
 			System.out.println(" > Creating Stub, interface:"+interface_names[i]);
 		}
 		obj_map.put(url, obj);
     	RemoteObjectRef ror = new RemoteObjectRef(host, port, 0, interface_names,url);
+    	System.out.println("Creating ROR using host address:"+host);
     	//ror.setObj_Name(url);
     	return ror;
     }
