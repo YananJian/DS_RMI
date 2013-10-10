@@ -53,15 +53,32 @@ public class TestServer implements Remote{
 		RemoteObjectRef ror = rms.create_ror(url, test);
 		System.out.println("in TestServer, created ror, serverip:"+ror.getIP_adr());
 		try {
-			register.bind(url, ror);
-			Vector<String> s = register.list();
-			Iterator<String> itr = s.iterator();
-			System.out.println(" > Listing ...");
-			while (itr.hasNext())
+		    //bind
+		    register.bind(url, ror);
+
+		    //list
+		    Vector<String> s = register.list();
+		    Iterator<String> itr = s.iterator();
+		    System.out.println(" > Listing ...");
+		    while (itr.hasNext())
 			{
-				String insts = itr.next();
-				System.out.println(" > "+insts);
+			    String insts = itr.next();
+			    System.out.println(" > "+insts);
 			}
+		    
+		    //unbind
+		    register.unbind(url);
+
+		    //list
+		    s = register.list();
+		    itr = s.iterator();
+		    System.out.println(" > Listing ...");
+		    while (itr.hasNext())
+			{
+			    String insts = itr.next();
+			    System.out.println(" > "+insts);
+			}
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
