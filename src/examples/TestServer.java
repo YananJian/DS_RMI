@@ -78,6 +78,9 @@ public class TestServer implements Remote{
 			    String insts = itr.next();
 			    System.out.println(" > "+insts);
 			}
+
+		    //rebind
+		    register.rebind(url, ror);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
