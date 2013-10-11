@@ -5,6 +5,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -50,8 +51,12 @@ public class RemoteObjectRef implements java.io.Serializable{
 			return rets;
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
+			
+		}catch(ConnectException e)
+		{
+			System.out.println("Lost connection with server...");
+		}
+    	catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -67,7 +72,7 @@ public class RemoteObjectRef implements java.io.Serializable{
     	Object o = null;   	 
         try 
         {
-        	Class<?> c = Class.forName("examples.Test_stub");
+        	Class<?> c = Class.forName(Obj_Name+"_stub");
 			
 			Constructor<?> constructor = c.getConstructor(String.class, int.class);
 			

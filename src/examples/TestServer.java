@@ -53,6 +53,12 @@ public class TestServer implements Remote{
 		try {
 			register.bind(url, ror);
 			Vector<String> s = register.list();
+			if (s == null)
+			{
+				System.out.println("TestServer can not connect to Registry");
+				rms.stop();
+				return;
+			}
 			Iterator<String> itr = s.iterator();
 			System.out.println(" > Listing ...");
 			while (itr.hasNext())
@@ -62,7 +68,7 @@ public class TestServer implements Remote{
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Can not connect to S_Registry, please start S_Registry first and use the proper ip and port of S_Registry");
 		}
 	}
 

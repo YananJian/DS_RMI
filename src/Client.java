@@ -35,6 +35,11 @@ public class Client {
     	  	
     	try {
 			RemoteObjectRef ror = M_Registry.lookup(url);
+			if (ror == null)
+			{
+				System.out.println("RemoteObjectRef does not exist");
+				return;
+			}
 			//System.out.println("In Client, server ip:"+ror.getIP_adr());
 			TestI t = (TestI) ror.localise();
 			String s = t.test("Yanan Jian");

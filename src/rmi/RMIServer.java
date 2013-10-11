@@ -23,6 +23,7 @@ public class RMIServer implements Runnable
     private ServerSocket listener = null;
     private static RMIServer rserver = null;
     private static Hashtable<String, Object> obj_map = null;
+    private boolean stop = false;
     
     private RMIServer(int port)
     {
@@ -32,7 +33,7 @@ public class RMIServer implements Runnable
 			System.out.println("Get host address:"+host);
 		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			
 		}
     	RMIServer.port = port;
     	try {
@@ -42,7 +43,9 @@ public class RMIServer implements Runnable
 	    
 	} catch (IOException e) {
 	    // TODO Auto-generated catch block
-	    e.printStackTrace();
+	   // e.printStackTrace();
+		System.out.println("Can not start the Server");
+		return;
 	}   	
     }
     
@@ -109,10 +112,11 @@ public class RMIServer implements Runnable
     		} catch (SecurityException e) {
     		  // ...
     		} catch (NoSuchMethodException e) {
+    			System.out.println("Can not find this method:"+func_name);
     		  // ...
     		} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				System.out.println("Wrong argument");
 			} catch (IllegalAccessException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -152,7 +156,7 @@ public class RMIServer implements Runnable
 	    System.out.println("Server Socket Can not establish");
 	    return;
     	}
-    	while(true)
+    	while(!stop)
     	{
     		 System.out.println(" > Listening for messages...");  		 
     		 try 
@@ -168,7 +172,8 @@ public class RMIServer implements Runnable
     			e.printStackTrace();
     		 } catch (IOException e) {
 		// TODO Auto-generated catch block
-		e.printStackTrace();
+		//e.printStackTrace();
+    			System.out.println("Lost Connection...");
 	    }
     	}
     	
@@ -180,6 +185,17 @@ public class RMIServer implements Runnable
 	listen();
     }
     
+    public void stop()
+    {
+    	stop = true;
+    	try {
+			listener.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
     public static void main(String args[])
     {
     	

@@ -52,10 +52,10 @@ public class M_Registry
 			e1.printStackTrace();
 		} catch (IOException e1) {
 			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			System.out.println("Can not connect to Registry Server");
 		}catch (ClassNotFoundException e) {
 		// TODO Auto-generated catch block
-    		e.printStackTrace();
+			System.out.println("Registry server is not returning Msg");
     	}	
 	return ret_msg;
     }
@@ -65,6 +65,9 @@ public class M_Registry
 	utils.Msg msg = new utils.Msg();
 	msg.set_msg_tp(MESSAGE_TYPE.LIST);
 	msg = communicate(msg);
+	if (msg == null)
+		return null;
+		
 	return msg.get_list();
     }
     
@@ -77,7 +80,11 @@ public class M_Registry
     	msg.setObj_name(url);
     	
     	ret_msg = communicate(msg);
-    	
+    	if (ret_msg == null)
+    	{
+    		System.out.println("Connecting to S_Registry error");
+    		return null;
+    	}
 		RemoteObjectRef ror = ret_msg.getRemote_ref();
 		// return ROR.
 		return ror;

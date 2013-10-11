@@ -59,7 +59,6 @@ public class S_Registry implements Runnable {
 		else if (msg.get_msg_tp() == MESSAGE_TYPE.BIND)
 		{
 			String host = msg.getIp() + ":" + Integer.toString(msg.getPort());
-			
 			reg.put(msg.getObj_name(), msg.getRemote_ref());
 			
 			reg_server.put(msg.getObj_name(), host);
