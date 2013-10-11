@@ -20,6 +20,7 @@ public class RMIServer implements Runnable
 {
     static String host;
     static int port;
+
     private ServerSocket listener = null;
     private static RMIServer rserver = null;
     private static Hashtable<String, Object> obj_map = null;
@@ -184,6 +185,7 @@ public class RMIServer implements Runnable
 	// TODO Auto-generated method stub
 	listen();
     }
+
     
     public void stop()
     {
@@ -198,8 +200,10 @@ public class RMIServer implements Runnable
     }
     public static void main(String args[])
     {
+
     	
 	
+
     }
 	
 }

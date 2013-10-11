@@ -10,6 +10,7 @@ import rmi.*;
 
 public class TestServer implements Remote{
 
+
 	/**
 	 * 
 	 */
@@ -47,25 +48,47 @@ public class TestServer implements Remote{
     	String remote_name = test.getClass().toString();
     	String[] interface_names=new String[interfaces.length];*/
     	
+
 		RMIServer rms = rmi.RMIServer.getInstance(server_port);
 		RemoteObjectRef ror = rms.create_ror(url, test);
 		System.out.println("in TestServer, created ror, serverip:"+ror.getIP_adr());
 		try {
-			register.bind(url, ror);
-			Vector<String> s = register.list();
-			if (s == null)
+
+		    //bind
+		    register.bind(url, ror);
+
+		    //list
+		    Vector<String> s = register.list();
+		    if (s == null)
 			{
 				System.out.println("TestServer can not connect to Registry");
 				rms.stop();
 				return;
 			}
-			Iterator<String> itr = s.iterator();
-			System.out.println(" > Listing ...");
-			while (itr.hasNext())
+		    Iterator<String> itr = s.iterator();
+		    System.out.println(" > Listing ...");
+		    while (itr.hasNext())
 			{
-				String insts = itr.next();
-				System.out.println(" > "+insts);
+			    String insts = itr.next();
+			    System.out.println(" > "+insts);
 			}
+		    
+		    //unbind
+		    register.unbind(url);
+
+		    //list
+		    s = register.list();
+		    itr = s.iterator();
+		    System.out.println(" > Listing ...");
+		    while (itr.hasNext())
+			{
+			    String insts = itr.next();
+			    System.out.println(" > "+insts);
+			}
+
+		    //rebind
+		    register.rebind(url, ror);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Can not connect to S_Registry, please start S_Registry first and use the proper ip and port of S_Registry");

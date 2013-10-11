@@ -77,6 +77,15 @@ public class S_Registry implements Runnable {
 			ret_msg.set_msg_tp(MESSAGE_TYPE.RET_BIND);
 		}
 		
+		else if (msg.get_msg_tp() == MESSAGE_TYPE.UNBIND)
+		{	
+		    String url = msg.getObj_name();
+		    this.reg.remove(url);
+		    this.reg_server.remove(url);
+
+		    ret_msg.set_msg_tp(MESSAGE_TYPE.RET_UNBIND);
+		}
+		
 		
 		return ret_msg;
 	}

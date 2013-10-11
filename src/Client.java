@@ -8,11 +8,12 @@ import utils.*;
 
 public class Client {
 
-	static M_Registry registry = null;
-	static String r_ip;
-	static int r_port;
-	static String url = "examples.Test";
-	
+    static M_Registry registry = null;
+    static String r_ip;
+    static int r_port;
+    static String url = "examples.Test";
+
+    
 	public static void main(String args[])
 	{		
 		
@@ -48,5 +49,7 @@ public class Client {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
-}
+   }
+
